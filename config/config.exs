@@ -60,6 +60,12 @@ config :logger, :default_formatter,
 # Use Jason for JSON parsing in Phoenix
 config :phoenix, :json_library, Jason
 
+# set default id type to UUID
+config :goatmire, Goatmire.Repo,
+  migration_primary_key: [name: :id, type: :binary_id],
+  migration_foreign_Key: [column: :id, type: :binary_id],
+  migration_timestamps: [type: :utc_datetime]
+
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
 import_config "#{config_env()}.exs"

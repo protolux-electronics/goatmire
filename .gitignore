@@ -44,3 +44,6 @@ npm-debug.log
 
 # LS files
 .expert/
+
+# Secrets
+.mise.local.toml
