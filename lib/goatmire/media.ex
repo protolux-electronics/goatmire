@@ -79,9 +79,9 @@ defmodule Goatmire.Media do
       {:error, %Ecto.Changeset{}}
 
   """
-  def update_image(%Image{} = image, attrs) do
+  def update_image_keys(%Image{} = image, attrs) do
     image
-    |> Image.changeset(attrs)
+    |> Image.update_keys_changeset(attrs)
     |> Repo.update()
   end
 

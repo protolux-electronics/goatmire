@@ -78,7 +78,7 @@ defmodule GoatmireWeb.HomeLive do
 
   @impl true
   def mount(_params, _session, socket) do
-    changeset = Media.change_image(%Media.Image{})
+    changeset = Media.Image.new_changeset(%Media.Image{}, %{})
 
     socket =
       socket
@@ -90,7 +90,7 @@ defmodule GoatmireWeb.HomeLive do
 
   @impl true
   def handle_event("validate", %{"image" => params}, socket) do
-    changeset = Media.change_image(%Media.Image{}, params)
+    changeset = Media.Image.new_changeset(%Media.Image{}, params)
 
     {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
   end
@@ -98,7 +98,7 @@ defmodule GoatmireWeb.HomeLive do
   @impl true
   def handle_event("submit", %{"image" => params}, socket) do
     with {:ok, _image} <-
-           Media.change_image(%Media.Image{}, params)
+           Media.Image.new_changeset(%Media.Image{}, params)
            |> Ecto.Changeset.apply_action(:insert),
          {:ok, s3_key} <- consume_s3_entry(socket),
          {:ok, _image} <-
