@@ -1,5 +1,4 @@
 defmodule GoatmireWeb.HomeLive do
-  alias Supervisor.Spec
   use GoatmireWeb, :live_view
 
   alias Goatmire.Media

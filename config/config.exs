@@ -7,6 +7,19 @@
 # General application configuration
 import Config
 
+config :goatmire, :scopes,
+  user: [
+    default: true,
+    module: Goatmire.Accounts.Scope,
+    assign_key: :current_scope,
+    access_path: [:user, :id],
+    schema_key: :user_id,
+    schema_type: :id,
+    schema_table: :users,
+    test_data_fixture: Goatmire.AccountsFixtures,
+    test_setup_helper: :register_and_log_in_user
+  ]
+
 config :goatmire, Oban,
   engine: Oban.Engines.Lite,
   queues: [default: 10],
