@@ -21,6 +21,7 @@ defmodule GoatmireWeb.Router do
     pipe_through :browser
 
     live "/", HomeLive
+    live "/gallery", GalleryLive
   end
 
   # Other scopes may use custom stacks.
@@ -64,7 +65,8 @@ defmodule GoatmireWeb.Router do
 
     live_session :current_user,
       on_mount: [{GoatmireWeb.UserAuth, :mount_current_scope}] do
-      live "/users/register", UserLive.Registration, :new
+      # don't allow user registrations
+      # live "/users/register", UserLive.Registration, :new
       live "/users/log-in", UserLive.Login, :new
       live "/users/log-in/:token", UserLive.Confirmation, :new
     end

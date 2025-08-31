@@ -17,7 +17,15 @@ defmodule Goatmire.Media.Image do
   @doc false
   def changeset(image, attrs) do
     image
-    |> cast(attrs, [:alt_text, :accept_terms])
+    |> cast(attrs, [
+      :alt_text,
+      :accept_terms,
+      :s3_key,
+      :thumbnail_key,
+      :dithered_key,
+      :approved_at,
+      :rejected_at
+    ])
     |> validate_required([:alt_text, :accept_terms])
   end
 

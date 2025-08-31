@@ -18,7 +18,11 @@ defmodule Goatmire.Media do
 
   """
   def list_approved_images do
-    from(i in Image, where: is_nil(i.rejected_at), where: not is_nil(i.approved_at))
+    from(i in Image,
+      where: is_nil(i.rejected_at),
+      where: not is_nil(i.approved_at),
+      order_by: {:desc, i.approved_at}
+    )
     |> Repo.all()
   end
 
@@ -112,5 +116,24 @@ defmodule Goatmire.Media do
   """
   def change_image(%Image{} = image, attrs \\ %{}) do
     Image.changeset(image, attrs)
+  end
+
+  def approve_image(%Image{} = image) do
+    change_image(image, %{approved_at: DateTime.utc_now()})
+    |> Repo.update()
+  end
+
+  def reject_image(%Image{} = image) do
+    change_image(image, %{rejected_at: DateTime.utc_now()})
+    |> Repo.update()
+  end
+
+  def list_moderation_queue() do
+    from(i in Image,
+      where: is_nil(i.rejected_at),
+      where: is_nil(i.approved_at),
+      order_by: {:asc, i.created_at}
+    )
+    |> Repo.all()
   end
 end

@@ -45,18 +45,15 @@ defmodule GoatmireWeb.Layouts do
       <div class="flex-none">
         <ul class="flex flex-column px-1 space-x-4 items-center">
           <li>
-            <a href="https://phoenixframework.org/" class="btn btn-ghost">Website</a>
+            <.link navigate={~p"/"} class="btn btn-ghost">About</.link>
           </li>
           <li>
-            <a href="https://github.com/phoenixframework/phoenix" class="btn btn-ghost">GitHub</a>
+            <.link navigate={~p"/gallery"} class="btn btn-ghost">Gallery</.link>
           </li>
           <li>
-            <.theme_toggle />
-          </li>
-          <li>
-            <a href="https://hexdocs.pm/phoenix/overview.html" class="btn btn-primary">
-              Get Started <span aria-hidden="true">&rarr;</span>
-            </a>
+            <.link navigate={~p"/"} class="btn btn-primary">
+              Upload a photo <span aria-hidden="true">&rarr;</span>
+            </.link>
           </li>
         </ul>
       </div>
