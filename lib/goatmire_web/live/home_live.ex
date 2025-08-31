@@ -1,4 +1,5 @@
 defmodule GoatmireWeb.HomeLive do
+  alias Supervisor.Spec
   use GoatmireWeb, :live_view
 
   alias Goatmire.Media
@@ -55,7 +56,12 @@ defmodule GoatmireWeb.HomeLive do
                   </progress>
                 </div>
               </div>
-              <.input field={f[:alt_text]} label="Image description (alt text)" phx-debounce="blur" />
+              <.input
+                field={f[:alt_text]}
+                label="Image description (alt text)"
+                phx-debounce="blur"
+                required
+              />
               <.input
                 type="checkbox"
                 field={f[:accept_terms]}
@@ -83,15 +89,34 @@ defmodule GoatmireWeb.HomeLive do
   end
 
   @impl true
-  def handle_event("validate", %{"image" => upload_params}, socket) do
-    changeset = Media.change_image(%Media.Image{}, upload_params)
+  def handle_event("validate", %{"image" => params}, socket) do
+    changeset = Media.change_image(%Media.Image{}, params)
 
     {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
   end
 
   @impl true
-  def handle_event("submit", %{"image" => _upload_params}, socket) do
-    {:noreply, put_flash(socket, :error, "NOT IMPLEMENTED")}
+  def handle_event("submit", %{"image" => params}, socket) do
+    with {:ok, _image} <-
+           Media.change_image(%Media.Image{}, params)
+           |> Ecto.Changeset.apply_action(:insert),
+         {:ok, s3_key} <- consume_s3_entry(socket),
+         {:ok, _image} <-
+           Map.put(params, "s3_key", s3_key)
+           |> Media.create_and_process_image() do
+      socket =
+        socket
+        |> put_flash(:success, "Image was uploaded and pending moderation")
+        |> push_navigate(to: "/")
+
+      {:noreply, socket}
+    else
+      {:error, :no_uploads} ->
+        {:noreply, put_flash(socket, :error, "Please select a file for upload")}
+
+      {:error, changeset} ->
+        {:noreply, assign(socket, form: to_form(changeset, action: :validate))}
+    end
   end
 
   def presign_upload(entry, socket) do
@@ -107,5 +132,13 @@ defmodule GoatmireWeb.HomeLive do
     {:ok, %{uploader: "S3", key: key, url: url}, socket}
   end
 
-  def bucket, do: Application.get_env(:ex_aws, :s3) |> Keyword.fetch!(:bucket)
+  defp bucket, do: Application.get_env(:ex_aws, :s3) |> Keyword.fetch!(:bucket)
+
+  defp consume_s3_entry(socket) do
+    consume_uploaded_entries(socket, :image, fn %{key: key}, _entry -> {:ok, key} end)
+    |> case do
+      [] -> {:error, :no_uploads}
+      [s3_key] -> {:ok, s3_key}
+    end
+  end
 end

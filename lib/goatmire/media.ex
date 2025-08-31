@@ -17,8 +17,9 @@ defmodule Goatmire.Media do
       [%Image{}, ...]
 
   """
-  def list_images do
-    Repo.all(Image)
+  def list_approved_images do
+    from(i in Image, where: is_nil(i.rejected_at), where: not is_nil(i.approved_at))
+    |> Repo.all()
   end
 
   @doc """
@@ -49,10 +50,21 @@ defmodule Goatmire.Media do
       {:error, %Ecto.Changeset{}}
 
   """
-  def create_image(attrs) do
+  def create_and_process_image(attrs) do
     %Image{}
-    |> Image.changeset(attrs)
+    |> Image.new_changeset(attrs)
     |> Repo.insert()
+    |> case do
+      {:ok, image} ->
+        %{"image_id" => image.id}
+        |> Goatmire.Media.ProcesImageWorker.new()
+        |> Oban.insert()
+
+        {:ok, image}
+
+      {:error, changeset} ->
+        {:error, changeset}
+    end
   end
 
   @doc """

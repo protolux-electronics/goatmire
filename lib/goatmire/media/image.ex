@@ -26,11 +26,19 @@ defmodule Goatmire.Media.Image do
       :approved_at,
       :rejected_at
     ])
-    |> validate_required([
-      :s3_key,
-      :alt_text,
-      :accept_terms
-    ])
+    |> validate_common()
+  end
+
+  def new_changeset(image, attrs) do
+    image
+    |> cast(attrs, [:s3_key, :alt_text, :accept_terms])
+    |> validate_required([:s3_key])
+    |> validate_common()
+  end
+
+  defp validate_common(changeset) do
+    changeset
+    |> validate_required([:alt_text, :accept_terms])
     |> validate_acceptance(:accept_terms, message: "You must agree to the terms")
     |> validate_length(:alt_text,
       min: 20,
