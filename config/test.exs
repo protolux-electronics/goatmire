@@ -1,5 +1,7 @@
 import Config
 
+config :goatmire, Oban, testing: :manual
+
 # Configure your database
 #
 # The MIX_TEST_PARTITION environment variable can be used

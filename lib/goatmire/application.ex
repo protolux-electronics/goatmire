@@ -12,6 +12,7 @@ defmodule Goatmire.Application do
       Goatmire.Repo,
       {Ecto.Migrator,
        repos: Application.fetch_env!(:goatmire, :ecto_repos), skip: skip_migrations?()},
+      {Oban, Application.fetch_env!(:goatmire, Oban)},
       {DNSCluster, query: Application.get_env(:goatmire, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Goatmire.PubSub},
       # Start a worker by calling: Goatmire.Worker.start_link(arg)

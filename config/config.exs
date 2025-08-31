@@ -7,6 +7,11 @@
 # General application configuration
 import Config
 
+config :goatmire, Oban,
+  engine: Oban.Engines.Lite,
+  queues: [default: 10],
+  repo: Goatmire.Repo
+
 config :goatmire,
   ecto_repos: [Goatmire.Repo],
   generators: [timestamp_type: :utc_datetime]
