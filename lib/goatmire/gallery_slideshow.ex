@@ -1,4 +1,4 @@
-defmodule Goatmire.DeviceGallery do
+defmodule Goatmire.GallerySlideshow do
   use GenServer
 
   alias Goatmire.Media
@@ -12,7 +12,7 @@ defmodule Goatmire.DeviceGallery do
     interval = Keyword.get(args, :interval, 5_000)
     timer = :timer.send_interval(interval, :update)
 
-    {:ok, %{update_every: interval}}
+    {:ok, %{update_every: interval, timer: timer}}
   end
 
   @impl true

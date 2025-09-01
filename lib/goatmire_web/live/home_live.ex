@@ -7,7 +7,7 @@ defmodule GoatmireWeb.HomeLive do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash}>
-      <div class="container py-24 mx-auto">
+      <div class="container mx-auto">
         <div class="card card-border card-lg bg-base-100 shadow-sm">
           <div class="card-body space-y-4">
             <div>
