@@ -22,6 +22,7 @@ defmodule GoatmireWeb.Router do
 
     live "/", HomeLive
     live "/gallery", GalleryLive
+    live "/moderation", ModerationLive
   end
 
   # Other scopes may use custom stacks.

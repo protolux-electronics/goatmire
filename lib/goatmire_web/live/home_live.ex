@@ -106,7 +106,7 @@ defmodule GoatmireWeb.HomeLive do
       socket =
         socket
         |> put_flash(:success, "Image was uploaded and pending moderation")
-        |> push_navigate(to: "/")
+        |> push_navigate(to: "/gallery")
 
       {:noreply, socket}
     else

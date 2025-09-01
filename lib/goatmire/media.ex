@@ -132,7 +132,7 @@ defmodule Goatmire.Media do
     from(i in Image,
       where: is_nil(i.rejected_at),
       where: is_nil(i.approved_at),
-      order_by: {:asc, i.created_at}
+      order_by: {:asc, i.inserted_at}
     )
     |> Repo.all()
   end
