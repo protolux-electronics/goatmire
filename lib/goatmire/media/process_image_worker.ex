@@ -11,11 +11,11 @@ defmodule Goatmire.Media.ProcesImageWorker do
       ExAws.S3.get_object(bucket(), image.s3_key)
       |> ExAws.request()
 
-    with {:ok, img} <- EInk.Utils.nif_from_binary(body),
-         {:ok, img} <- EInk.Utils.nif_resize(img, 400, 300),
-         {:ok, color_png} <- EInk.Utils.nif_to_binary(img, :png),
-         {:ok, img} <- EInk.Utils.nif_dither_grayscale(img, :sierra, 1),
-         {:ok, dithered_png} <- EInk.Utils.nif_to_binary(img, :png) do
+    with {:ok, img} <- Dither.decode(body),
+         {:ok, img_small} <- Dither.resize(img, 400, 300),
+         {:ok, png_color} <- Dither.encode(img_small),
+         {:ok, img_dithered} <- Dither.dither(img_small, algorithm: :sierra),
+         {:ok, png_dithered} <- Dither.encode(img_dithered) do
       key_base =
         image.s3_key
         |> Path.split()
@@ -23,8 +23,8 @@ defmodule Goatmire.Media.ProcesImageWorker do
         |> Path.join()
 
       data = [
-        {:dithered_key, generate_key(key_base), dithered_png},
-        {:thumbnail_key, generate_key(key_base), color_png}
+        {:dithered_key, generate_key(key_base), png_dithered},
+        {:thumbnail_key, generate_key(key_base), png_color}
       ]
 
       keys =

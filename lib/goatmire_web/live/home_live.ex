@@ -131,8 +131,6 @@ defmodule GoatmireWeb.HomeLive do
     {:ok, %{uploader: "S3", key: key, url: url}, socket}
   end
 
-  defp bucket, do: Application.get_env(:ex_aws, :s3) |> Keyword.fetch!(:bucket)
-
   defp consume_s3_entry(socket) do
     consume_uploaded_entries(socket, :image, fn %{key: key}, _entry -> {:ok, key} end)
     |> case do

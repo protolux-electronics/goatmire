@@ -90,17 +90,6 @@ defmodule GoatmireWeb.ModerationLive do
     stream(socket, :moderation_queue, queue)
   end
 
-  defp presigned_url(key) do
-    ExAws.Config.new(:s3)
-    |> ExAws.S3.presigned_url(:get, bucket(), key)
-    |> case do
-      {:ok, url} -> url
-      _ -> nil
-    end
-  end
-
-  defp bucket, do: Application.get_env(:ex_aws, :s3) |> Keyword.fetch!(:bucket)
-
   defp image_key(%{"image_key" => "dithered_key"}), do: :dithered_key
   defp image_key(_params), do: :thumbnail_key
 end
