@@ -22,8 +22,12 @@ FROM ${BUILDER_IMAGE} AS builder
 
 # install build dependencies
 RUN apt-get update \
-  && apt-get install -y --no-install-recommends build-essential git \
+  && apt-get install -y --no-install-recommends build-essential git curl pkg-config libssl-dev \
+  && curl https://sh.rustup.rs -sSf | sh -s -- -y \
+  && . "/root/.cargo/env" \
   && rm -rf /var/lib/apt/lists/*
+
+ENV PATH="/root/.cargo/bin:${PATH}"
 
 # prepare build dir
 WORKDIR /app
