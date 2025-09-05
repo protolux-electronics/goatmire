@@ -1,8 +1,10 @@
 defmodule GoatmireWeb.DeviceGalleryChannel do
   use GoatmireWeb, :channel
 
+  require Logger
+
   @impl true
-  def join("device_gallery:lobby", payload, socket) do
+  def join("device_gallery", payload, socket) do
     if authorized?(payload) do
       Phoenix.PubSub.subscribe(Goatmire.PubSub, "device_gallery")
 
@@ -29,7 +31,7 @@ defmodule GoatmireWeb.DeviceGalleryChannel do
 
   @impl true
   def handle_info({:gallery_image, image}, socket) do
-    IO.inspect(image, label: "GALLERY IMAGE FOR DEVICE CHANNEL")
+    Logger.debug("GALLERY IMAGE FOR DEVICE CHANNEL: #{inspect(image)}")
 
     {:noreply, socket}
   end
