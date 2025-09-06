@@ -9,21 +9,24 @@ defmodule Goatmire.GallerySlideshow do
 
   @impl true
   def init(args) do
-    interval = Keyword.get(args, :interval, 5_000)
+    interval = Keyword.get(args, :interval, 10_000)
     timer = :timer.send_interval(interval, :update)
 
-    {:ok, %{update_every: interval, timer: timer}}
+    {:ok, %{update_every: interval, timer: timer, photos: []}}
   end
 
   @impl true
   def handle_info(:update, state) do
-    image =
-      Media.list_approved_images()
-      |> Enum.shuffle()
-      |> List.first()
+    [image | rest] =
+      case state.photos do
+        [] -> Media.list_approved_images() |> Enum.shuffle()
+        photos -> photos
+      end
 
-    Phoenix.PubSub.broadcast(Goatmire.PubSub, "device_gallery", {:gallery_image, image})
+    GoatmireWeb.Endpoint.broadcast("device_gallery", "image", %{
+      url: Goatmire.Utils.presigned_url(image.dithered_key)
+    })
 
-    {:noreply, state}
+    {:noreply, put_in(state.photos, rest)}
   end
 end

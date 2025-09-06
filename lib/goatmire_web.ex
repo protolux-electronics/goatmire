@@ -91,23 +91,7 @@ defmodule GoatmireWeb do
       alias Phoenix.LiveView.JS
       alias GoatmireWeb.Layouts
 
-      defp presigned_url(key) do
-        today =
-          NaiveDateTime.utc_now()
-          |> NaiveDateTime.beginning_of_day()
-
-        ExAws.Config.new(:s3)
-        |> ExAws.S3.presigned_url(:get, bucket(), key,
-          start_datetime: today,
-          expires_in: 24 * 60 * 60
-        )
-        |> case do
-          {:ok, url} -> url
-          _ -> nil
-        end
-      end
-
-      defp bucket, do: Application.get_env(:ex_aws, :s3) |> Keyword.fetch!(:bucket)
+      import Goatmire.Utils
 
       # Routes generation with the ~p sigil
       unquote(verified_routes())
