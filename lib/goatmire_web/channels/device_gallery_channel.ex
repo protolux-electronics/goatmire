@@ -4,7 +4,7 @@ defmodule GoatmireWeb.DeviceGalleryChannel do
   require Logger
 
   @impl true
-  def join("device_gallery", payload, socket) do
+  def join("device_gallery", _payload, socket) do
     {:ok, socket}
   end
 end

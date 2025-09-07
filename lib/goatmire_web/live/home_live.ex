@@ -7,68 +7,66 @@ defmodule GoatmireWeb.HomeLive do
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash}>
-      <div class="container mx-auto">
-        <div class="card card-border card-lg bg-base-100 shadow-sm">
-          <div class="card-body space-y-4">
-            <div>
-              <div class="card-title">Upload an image</div>
-              <p class="text-sm text-neutral/50">
-                Images will be center cropped with a 4:3 aspect ratio
-              </p>
-            </div>
-
-            <.form
-              :let={f}
-              for={@form}
-              phx-change="validate"
-              phx-submit="submit"
-              phx-debounce="blur"
-              class="space-y-4"
-            >
-              <div
-                phx-drop-target={@uploads.image.ref}
-                class="flex flex-col items-center justify-center w-full p-8 rounded-lg border border-dashed border-neutral/50"
-              >
-                <.icon name="hero-arrow-up-circle text-neutral/50 mb-4" class="w-10 h-10" />
-
-                <p class="">Drag and drop here</p>
-                <p class="divider w-32 mx-auto">or</p>
-
-                <label class="btn btn-soft">
-                  Select from device <.live_file_input upload={@uploads.image} class="hidden" />
-                </label>
-              </div>
-              <div
-                :for={entry <- @uploads.image.entries}
-                class="flex rounded-lg border border-neutral/20 p-4 gap-4"
-              >
-                <.live_img_preview entry={entry} class="h-14 rounded" />
-
-                <div class="w-full flex flex-col gap-4">
-                  <div class="w-full flex justify-between">
-                    <span>{entry.client_name}</span>
-                    <span>{Float.round(entry.client_size / 1_000_000, 1)} MB</span>
-                  </div>
-
-                  <progress value={entry.progress} max="100" class="progress progress-secondary">
-                    {entry.progress}%
-                  </progress>
-                </div>
-              </div>
-              <.input
-                field={f[:alt_text]}
-                label="Image description (alt text)"
-                phx-debounce="blur"
-                required
-              />
-              <.input
-                type="checkbox"
-                field={f[:accept_terms]}
-                label="I understand that files uploaded here will be publicly accessible and agree to their use"
-              />
-              <.button class="btn btn-primary w-full">Upload</.button>
-            </.form>
+      <div class="card card-border card-lg bg-base-100 shadow-sm">
+        <div class="card-body space-y-4">
+          <div>
+            <div class="card-title">Upload an image</div>
+            <p class="text-sm text-neutral/50">
+              Images will be center cropped with a 4:3 aspect ratio
+            </p>
           </div>
+
+          <.form
+            :let={f}
+            for={@form}
+            phx-change="validate"
+            phx-submit="submit"
+            phx-debounce="blur"
+            class="space-y-4"
+          >
+            <div
+              phx-drop-target={@uploads.image.ref}
+              class="flex flex-col items-center justify-center w-full p-8 rounded-lg border border-dashed border-neutral/50"
+            >
+              <.icon name="hero-arrow-up-circle text-neutral/50 mb-4" class="w-10 h-10" />
+
+              <p class="">Drag and drop here</p>
+              <p class="divider w-32 mx-auto">or</p>
+
+              <label class="btn btn-soft">
+                Select from device <.live_file_input upload={@uploads.image} class="hidden" />
+              </label>
+            </div>
+            <div
+              :for={entry <- @uploads.image.entries}
+              class="flex rounded-lg border border-neutral/20 p-4 gap-4"
+            >
+              <.live_img_preview entry={entry} class="h-14 rounded" />
+
+              <div class="w-full flex flex-col gap-4">
+                <div class="w-full flex justify-between">
+                  <span>{entry.client_name}</span>
+                  <span>{Float.round(entry.client_size / 1_000_000, 1)} MB</span>
+                </div>
+
+                <progress value={entry.progress} max="100" class="progress progress-secondary">
+                  {entry.progress}%
+                </progress>
+              </div>
+            </div>
+            <.input
+              field={f[:alt_text]}
+              label="Image description (alt text)"
+              phx-debounce="blur"
+              required
+            />
+            <.input
+              type="checkbox"
+              field={f[:accept_terms]}
+              label="I understand that files uploaded here will be publicly accessible and agree to their use"
+            />
+            <.button class="btn btn-primary w-full">Upload</.button>
+          </.form>
         </div>
       </div>
     </Layouts.app>
