@@ -73,7 +73,8 @@ defmodule Goatmire.MixProject do
       {:ex_aws_s3, "~> 2.0"},
       {:hackney, "~> 1.9"},
       {:sweet_xml, "~> 0.6.6"},
-      {:dither, github: "protolux-electronics/dither"}
+      {:dither, github: "protolux-electronics/dither"},
+      {:typst, github: "gworkman/typst"}
     ]
   end
 

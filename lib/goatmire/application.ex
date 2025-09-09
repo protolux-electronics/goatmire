@@ -15,7 +15,7 @@ defmodule Goatmire.Application do
       {Oban, Application.fetch_env!(:goatmire, Oban)},
       {DNSCluster, query: Application.get_env(:goatmire, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Goatmire.PubSub},
-      {Goatmire.GallerySlideshow, interval: 3_000},
+      {Goatmire.GallerySlideshow, interval: 10_000},
       {Registry, name: Goatmire.ConfigRegistry, keys: :unique},
       # Start a worker by calling: Goatmire.Worker.start_link(arg)
       # {Goatmire.Worker, arg},
