@@ -256,8 +256,10 @@ defmodule GoatmireWeb.DeviceConfigLive do
       )
     );
     """
-    |> tap(&IO.puts/1)
-    |> Typst.render_to_png([], root_dir: Application.app_dir(:goatmire, "priv/typst"))
+    |> Typst.render_to_png([],
+      root_dir: Application.app_dir(:goatmire, "priv/typst"),
+      extra_fonts: [Application.app_dir(:goatmire, "priv/typst/fonts")]
+    )
     |> case do
       {:ok, [png | _rest]} ->
         "data:image/png;base64,#{Base.encode64(png)}"
