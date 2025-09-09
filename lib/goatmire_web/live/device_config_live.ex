@@ -1,6 +1,7 @@
 defmodule GoatmireWeb.DeviceConfigLive do
   use GoatmireWeb, :live_view
 
+  @impl true
   def render(assigns) do
     ~H"""
     <Layouts.app flash={@flash}>
@@ -97,10 +98,12 @@ defmodule GoatmireWeb.DeviceConfigLive do
               <div class="px-2">
                 <.async_result :let={preview} assign={@preview}>
                   <:loading>Loading preview...</:loading>
-                  <:failed :let={_failure}>there was an error loading the preview</:failed>
+                  <:failed :let={_failure}>
+                    There was an error loading the preview. The text you entered may result in invalid Typst templating
+                  </:failed>
                   <img
                     src={preview}
-                    alt="Preview of the rendered content. If you see this, the template probably has an error"
+                    alt="Preview of the rendered content. If you see this, the template probably has a rendering error"
                     class="w-full"
                   />
                 </.async_result>
@@ -119,7 +122,7 @@ defmodule GoatmireWeb.DeviceConfigLive do
   def mount(params, _session, socket) do
     token = Map.get(params, "token")
 
-    case Registry.lookup(Goatmire.ConfigRegistry, token) do
+    case Registry.lookup(Goatmire.DeviceRegistry, token) do
       [{pid, config}] ->
         Process.monitor(pid)
 
@@ -133,7 +136,12 @@ defmodule GoatmireWeb.DeviceConfigLive do
         socket =
           socket
           |> assign(token: token, config: config)
-          |> assign_async(:preview, fn -> {:ok, %{preview: render_config(config)}} end)
+          |> assign_async(:preview, fn ->
+            case render_config(config) do
+              {:ok, preview} -> {:ok, %{preview: preview}}
+              other -> other
+            end
+          end)
 
         {:ok, socket}
 
@@ -153,7 +161,12 @@ defmodule GoatmireWeb.DeviceConfigLive do
     socket =
       socket
       |> assign(config: config)
-      |> assign_async(:preview, fn -> {:ok, %{preview: render_config(config)}} end)
+      |> assign_async(:preview, fn ->
+        case render_config(config) do
+          {:ok, preview} -> {:ok, %{preview: preview}}
+          other -> other
+        end
+      end)
 
     {:noreply, socket}
   end
@@ -182,7 +195,7 @@ defmodule GoatmireWeb.DeviceConfigLive do
           ""
 
         greeting when is_binary(greeting) ->
-          "text(font: \"New Amsterdam\", size: #{config["greeting_size"]}pt)[#{greeting}],"
+          "text(font: \"New Amsterdam\", size: #{config["greeting_size"]}pt, \"#{greeting}\"),"
       end
 
     company_element =
@@ -194,7 +207,7 @@ defmodule GoatmireWeb.DeviceConfigLive do
           ""
 
         company when is_binary(company) ->
-          "text(font: \"New Amsterdam\", size: #{config["company_size"]}pt)[#{company}],"
+          "text(font: \"New Amsterdam\", size: #{config["company_size"]}pt, \"#{company}\"),"
       end
 
     """
@@ -249,7 +262,6 @@ defmodule GoatmireWeb.DeviceConfigLive do
 
     #place(center + horizon,
       stack(dir: ttb, spacing: #{config["spacing"]}pt,
-
         #{greeting_element}
         text(font: "New Amsterdam", size: #{config["name_size"]}pt, "#{config["first_name"]} #{config["last_name"]}"),
         #{company_element}
@@ -262,11 +274,11 @@ defmodule GoatmireWeb.DeviceConfigLive do
     )
     |> case do
       {:ok, [png | _rest]} ->
-        "data:image/png;base64,#{Base.encode64(png)}"
+        {:ok, "data:image/png;base64,#{Base.encode64(png)}"}
 
       {:error, reason} when is_binary(reason) ->
-        IO.puts(reason)
-        nil
+        IO.puts(:stderr, reason)
+        {:error, :compile_template}
     end
   end
 end

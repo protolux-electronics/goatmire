@@ -24,6 +24,7 @@ defmodule GoatmireWeb.Router do
     live "/gallery", GalleryLive
     live "/moderation", ModerationLive
     live "/device/:token/config", DeviceConfigLive
+    live "/survey", SurveyLive
   end
 
   # Other scopes may use custom stacks.

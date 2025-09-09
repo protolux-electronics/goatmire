@@ -16,7 +16,7 @@ defmodule Goatmire.Application do
       {DNSCluster, query: Application.get_env(:goatmire, :dns_cluster_query) || :ignore},
       {Phoenix.PubSub, name: Goatmire.PubSub},
       {Goatmire.GallerySlideshow, interval: 10_000},
-      {Registry, name: Goatmire.ConfigRegistry, keys: :unique},
+      {Registry, name: Goatmire.DeviceRegistry, keys: :unique},
       # Start a worker by calling: Goatmire.Worker.start_link(arg)
       # {Goatmire.Worker, arg},
       # Start to serve requests, typically the last entry

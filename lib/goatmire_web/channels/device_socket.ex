@@ -10,6 +10,7 @@ defmodule GoatmireWeb.DeviceSocket do
 
   channel "device_gallery", GoatmireWeb.DeviceGalleryChannel
   channel "config:*", GoatmireWeb.DeviceConfigChannel
+  channel "survey", GoatmireWeb.SurveyChannel
 
   # Socket params are passed from the client and can
   # be used to verify and authenticate a user. After

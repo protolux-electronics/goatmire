@@ -5,7 +5,7 @@ defmodule GoatmireWeb.DeviceConfigChannel do
 
   @impl true
   def join("config:" <> token, params, socket) do
-    Registry.register(Goatmire.ConfigRegistry, token, params)
+    Registry.register(Goatmire.DeviceRegistry, token, params)
 
     {:ok, socket}
   end
